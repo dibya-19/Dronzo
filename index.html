@@ -1,160 +1,491 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dronzo Delivery | Fastest Drone Shipping Service</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="response.js"></script>
-    <link rel="stylesheet" href="utils.css">
+    <title>DronZo - Fast Drone Delivery at Your Fingertips</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: white;
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #4B0082;
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: #4B0082;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #4B0082;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-login {
+            padding: 10px 24px;
+            background: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-login:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-signup {
+            padding: 10px 24px;
+            background: #000;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-signup:hover {
+            background: #333;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 600px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            top: -200px;
+            right: -200px;
+        }
+
+        .hero-content {
+            max-width: 550px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255,255,255,0.95);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .delivery-form {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4B0082;
+        }
+
+        .btn-request {
+            width: 100%;
+            padding: 16px;
+            background: #4B0082;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .btn-request:hover {
+            background: #3a0066;
+            transform: translateY(-2px);
+        }
+
+        .drone-animation {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            z-index: 2;
+        }
+
+        .drone {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-20px); }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 80px;
+            background: #f8f9fa;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 42px;
+            margin-bottom: 60px;
+            color: #333;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .feature-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            background: #000;
+            color: white;
+            padding: 60px 80px 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-section ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #333;
+            color: #aaa;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                padding: 40px 20px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .drone-animation {
+                display: none;
+            }
+
+            .features, footer {
+                padding: 40px 20px;
+            }
+
+            header {
+                padding: 16px 20px;
+            }
+
+            nav {
+                display: none;
+            }
+        }
+    </style>
 </head>
-
-<body class='overflow-x-hidden'>
-    <div class="container mx-auto">
-        <header class="header-bar">
-          <nav class="nav-container flex justify-between items-center">
-            <div class="logo-area flex items-center">
-              <img src="drone-icon.png" alt="Dronzo Logo" class="logo-icon">
-              <span class="logo-text">Dronzo</span>
+<body>
+    <header>
+        <div class="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 20 L30 35 L35 40 L50 30 L65 40 L70 35 Z"/>
+                <circle cx="30" cy="35" r="3"/>
+                <circle cx="70" cy="35" r="3"/>
+                <ellipse cx="50" cy="45" rx="15" ry="8"/>
+                <line x1="35" y1="40" x2="30" y2="50" stroke="#4B0082" stroke-width="2"/>
+                <line x1="65" y1="40" x2="70" y2="50" stroke="#4B0082" stroke-width="2"/>
+                <circle cx="30" cy="50" r="4"/>
+                <circle cx="70" cy="50" r="4"/>
+                <path d="M45 28 L50 15 L55 28" stroke="#4B0082" stroke-width="2" fill="none"/>
+            </svg>
+            <span>DronZo</span>
+        </div>
+        <nav>
+            <a href="#delivery">Delivery</a>
+            <a href="#tracking">Track Order</a>
+            <a href="#business">For Business</a>
+            <a href="#about">About</a>
+            <div class="nav-buttons">
+                <button class="btn-login">Log in</button>
+                <button class="btn-signup">Sign up</button>
             </div>
-            <ul class="nav-links flex">
-              <li>Products</li>
-              <li>Platform</li>
-              <li>Pricing</li>
-              <li>Partners</li>
-            </ul>
-            <div class="nav-buttons flex">
-              <button class="btn-outline">Log In</button>
-              <button class="btn-primary">Try for Free</button>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Sky-high delivery, lightning fast</h1>
+            <p>Get your packages delivered by drone in minutes. The future of delivery is here with DronZo.</p>
+            
+            <div class="delivery-form">
+                <div class="form-group">
+                    <label>Pickup Location</label>
+                    <input type="text" placeholder="Enter pickup address">
+                </div>
+                <div class="form-group">
+                    <label>Drop-off Location</label>
+                    <input type="text" placeholder="Enter destination address">
+                </div>
+                <button class="btn-request">Request Drone Delivery</button>
             </div>
-          </nav>
-        </header>
-        <main class="min-h-screen">
-            <section class="section1">
-                <div class="flex">
-                    <div class="topleft flex flex-col justify-center px-2">
-                        <div class=" text-center">
-                            🚀 The Future of Logistics
-                        </div>
-                        <h1 class="my-1 text-center">Revolutionize Delivery with Dronzo</h1>
-                        <p class=" text-center">Experience lightning-fast drone-powered delivery right to your doorstep. Reliable. Safe. Smart.</p>
-                            <!-- Display the countdown timer in an element -->
-                            <button class="butn">Get Started Free</button>
-                            <div class="buttons">
-                                <img class="deliveryimg" src="delivery.jpg" alt="" style="width: 300px; height: auto; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-                                <button class="btn">Contact Us</button>
-                            </div>
-                    </div>
-                    <div class="topright flex justify-center">
-                        <img class="gymimg" src="track.jpg" alt="">
-                    </div>
-                </div>
-            </section>
-            <hr>
-            <section class="section2">
-                <h1 class="text-center my-2">About Dronzo</h1>
-                <p class="my-2">Dronzo is a cutting-edge hyperlocal drone delivery platform helping businesses reach customers faster and more efficiently. Our network ensures reliable, safe, and eco-friendly deliveries across major cities in India.</p>
-                <div class="boxes flex justify-center">
-                    <div class="box">
-                        <h2>Starter</h2>
-                        <ul>
-                            <li class="highlighted">₹99/month</li>
-                            <li>Up to 5 deliveries/day</li>
-                            <li>24/7 Support</li>
-                            <li>Real-time tracking</li>
-                            <li>Priority Assistance (Pro & Enterprise only)</li>
-                            <li><button class="btn">Signup Now</button></li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h2>Professional</h2>
-                        <ul>
-                            <li class="highlighted">₹299/month</li>
-                            <li>Up to 5 deliveries/day</li>
-                            <li>24/7 Support</li>
-                            <li>Real-time tracking</li>
-                            <li>Priority Assistance (Pro & Enterprise only)</li>
-                            <li><button class="btn">Signup Now</button></li>
-                        </ul>
-                    </div>
-                    <div class="box">
-                        <h2>Enterprise</h2>
-                        <ul>
-                            <li class="highlighted">₹699/month</li>
-                            <li>Up to 5 deliveries/day</li>
-                            <li>24/7 Support</li>
-                            <li>Real-time tracking</li>
-                            <li>Priority Assistance (Pro & Enterprise only)</li>
-                            <li><button class="btn">Signup Now</button></li>
-                        </ul>
-                    </div>
+        </div>
 
-                </div>
-            </section>
-            <hr>
-            <section class="section3">
-                <h1 class="text-center my-2">Compare Our Plans</h1>
-                <div class="container plantable">
-                    <table class="table text-center">
-                      <thead>
-                        <tr>
-                          <th></th><th>Free</th>
-                          <th>Pro</th>
-                          <th>Enterprise</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <th scope="row" class="text-start">Public Access</th>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                        </tr>
-                        <tr>
-                          <th scope="row" class="text-start">Private Orders</th>
-                          <td>-</td>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                        </tr>
-                      </tbody>
-              
-                      <tbody>
-                        <tr>
-                          <th scope="row" class="text-start">Real-time Tracking</th>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                        </tr>
-                        <tr>
-                          <th scope="row" class="text-start">Priority Support</th>
-                          <td>-</td>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                        </tr>
-                        <tr>
-                          <th scope="row" class="text-start">Unlimited Deliveries</th>
-                          <td>-</td>
-                          <td>Yes</svg></td>
-                          <td>Yes</svg></td>
-                        </tr>
-                        <tr>
-                          <th scope="row" class="text-start">Advanced Security</th>
-                          <td>-</td>
-                          <td>-</td>
-                          <td>Yes</svg></td>
-                        </tr>
-                      </tbody>
-                    </table>
-            </section>
-            <hr>
-        </main>
-        <footer>
-            © 2025 Dronzo Delivery | Built with 💙 for Smarter Logistics
-        </footer>
+        <div class="drone-animation">
+            <svg class="drone" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="droneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="100" cy="100" rx="40" ry="20" fill="url(#droneGradient)"/>
+                <line x1="60" y1="85" x2="40" y2="70" stroke="white" stroke-width="4"/>
+                <line x1="140" y1="85" x2="160" y2="70" stroke="white" stroke-width="4"/>
+                <circle cx="40" cy="70" r="15" fill="white" opacity="0.8"/>
+                <circle cx="160" cy="70" r="15" fill="white" opacity="0.8"/>
+                <circle cx="40" cy="70" r="8" fill="url(#droneGradient)"/>
+                <circle cx="160" cy="70" r="8" fill="url(#droneGradient)"/>
+                <path d="M85 80 L100 50 L115 80" stroke="white" stroke-width="3" fill="none"/>
+                <rect x="85" y="110" width="30" height="25" rx="3" fill="white" opacity="0.9"/>
+            </svg>
+        </div>
+    </section>
 
-    </div>
+    <section class="features">
+        <h2>Why Choose DronZo?</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Ultra Fast</h3>
+                <p>Deliveries in under 30 minutes. Our drones fly direct routes, avoiding traffic completely.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Eco-Friendly</h3>
+                <p>Zero emissions delivery. Help reduce carbon footprint with electric drone technology.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Real-Time Tracking</h3>
+                <p>Watch your package fly to you in real-time with GPS tracking and live updates.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Affordable Rates</h3>
+                <p>Competitive pricing with no surge fees. Transparent costs calculated upfront.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Safe & Secure</h3>
+                <p>Advanced AI navigation and secure delivery protocols ensure your package arrives safely.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>24/7 Service</h3>
+                <p>Available round the clock for your delivery needs, rain or shine.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#">Drone Delivery</a></li>
+                    <li><a href="#">Business Solutions</a></li>
+                    <li><a href="#">API Integration</a></li>
+                    <li><a href="#">Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Safety</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Licenses</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 DronZo Technologies Inc. All rights reserved. | www.dronzo.delivery</p>
+        </div>
+    </footer>
 </body>
-
 </html>
