@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pricing - DronZo</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Page scaffolding */
+    body { background:#f7f7f7; margin:0; font-family: Arial, sans-serif; }
+    main.page { padding: 0 1rem 3rem; }
+
+    /* Hero */
+    .hero.compact { padding: 2.5rem 1rem 1.5rem; background:#4B0082; color:#fff; text-align:center; }
+    .hero.compact h1 { margin:0 0 .5rem; }
+    .hero.compact p { margin:0; opacity:.95; }
+
+    /* Pricing grid */
+    .pricing-grid { max-width:1100px; margin: 2rem auto; display:grid; gap:1.25rem; grid-template-columns: repeat(3, 1fr); }
+    @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } }
+
+    .plan { background:#fff; border:1px solid #e9e9e9; border-radius:12px; padding:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,.06); display:flex; flex-direction:column; }
+    .plan.popular { border-color:#9b72cf; box-shadow:0 6px 18px rgba(75,0,130,.18); position:relative; }
+    .plan.popular::before { content:"Most Popular"; position:absolute; top:-12px; left:1rem; background:#4B0082; color:#fff; font-size:.75rem; padding:.25rem .6rem; border-radius:6px; letter-spacing:.3px; }
+    .plan h3 { margin:.25rem 0 .5rem; font-size:1.35rem; }
+    .price { font-size:2rem; font-weight:700; margin:.25rem 0; }
+    .price small { font-size:.9rem; font-weight:500; color:#666; }
+    .plan p.desc { color:#555; margin: .25rem 0 1rem; min-height:3rem; }
+    .features { list-style:none; padding:0; margin:0 0 1.25rem; }
+    .features li { display:flex; gap:.5rem; align-items:flex-start; margin:.45rem 0; }
+    .features li::before { content:"✔"; margin-top:.1rem; }
+    .plan .cta { margin-top:auto; }
+    .btn-primary, .btn-ghost { display:inline-block; text-decoration:none; padding:.75rem 1rem; border-radius:8px; font-weight:600; text-align:center; }
+    .btn-primary { background:#4B0082; color:#fff; }
+    .btn-primary:hover { opacity:.9; }
+    .btn-ghost { border:1px solid #4B0082; color:#4B0082; background:#fff; }
+    .btn-ghost:hover { background:#f2eaff; }
+
+    /* Toggle (optional look; static by default) */
+    .billing-toggle { display:flex; gap:.75rem; align-items:center; justify-content:center; margin:1rem auto 0; color:#eee; }
+    .billing-toggle .pill { background:rgba(255,255,255,.15); border:1px solid rgba(255,255,255,.25); padding:.25rem; border-radius:999px; display:flex; gap:.25rem; }
+    .billing-toggle button { background:transparent; border:0; color:#fff; padding:.4rem .75rem; border-radius:999px; cursor:pointer; }
+    .billing-toggle button.active { background:#fff; color:#4B0082; }
+
+    /* Comparison table */
+    .compare { max-width:1100px; margin: 2rem auto; background:#fff; border:1px solid #e9e9e9; border-radius:12px; box-shadow:0 2px 8px rgba(0,0,0,.06); overflow:auto; }
+    table.pricing-compare { width:100%; border-collapse:collapse; min-width:720px; }
+    .pricing-compare th, .pricing-compare td { padding:1rem; border-bottom:1px solid #efefef; text-align:center; }
+    .pricing-compare th:first-child, .pricing-compare td:first-child { text-align:left; width:38%; }
+    .pricing-compare thead th { background:#faf7ff; color:#2c1a4a; }
+    .check { font-weight:700; }
+    .muted { color:#777; }
+
+    /* Footer spacing */
+    footer { margin-top: 2.5rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Header (same as index.html) -->
+  <header>
+    <div class="logo">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 20 L30 35 L35 40 L50 30 L65 40 L70 35 Z"/>
+        <circle cx="30" cy="35" r="3"/>
+        <circle cx="70" cy="35" r="3"/>
+        <ellipse cx="50" cy="45" rx="15" ry="8"/>
+        <line x1="35" y1="40" x2="30" y2="50" stroke="#4B0082" stroke-width="2"/>
+        <line x1="65" y1="40" x2="70" y2="50" stroke="#4B0082" stroke-width="2"/>
+        <circle cx="30" cy="50" r="4"/>
+        <circle cx="70" cy="50" r="4"/>
+        <path d="M45 28 L50 15 L55 28" stroke="#4B0082" stroke-width="2" fill="none"/>
+      </svg>
+      <span>DronZo</span>
+    </div>
+    <nav>
+      <a href="tracking.html">Track Order</a>
+      <a href="#business">For Business</a>
+      <a href="about.html">About</a>
+      <div class="nav-buttons">
+        <a href="login.html" class="btn-login">Log in</a>
+        <a href="signup.html" class="btn-signup">Sign up</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="page">
+    <!-- Hero -->
+    <section class="hero compact">
+      <h1>Transparent, flexible pricing</h1>
+      <p>Pick a plan that fits your delivery volume. Upgrade or cancel anytime.</p>
+
+      <!-- Optional visual toggle (static) -->
+      <div class="billing-toggle" aria-hidden="true">
+        <span>Billing:</span>
+        <div class="pill">
+          <button class="active" type="button">Monthly</button>
+          <button type="button" title="Save 15% on annual plans">Annual</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Pricing Cards -->
+    <section class="pricing-grid">
+      <!-- Basic -->
+      <div class="plan">
+        <h3>Basic</h3>
+        <div class="price">₹199<small>/month</small></div>
+        <p class="desc">For individuals and small shops starting with drone delivery.</p>
+        <ul class="features">
+          <li>Up to 50 deliveries / month</li>
+          <li>Standard ETA</li>
+          <li>Live tracking (web)</li>
+          <li>Email support (Mon–Fri)</li>
+        </ul>
+        <div class="cta">
+          <a class="btn-ghost" href="signup.html">Get Started</a>
+        </div>
+      </div>
+
+      <!-- Pro (Popular) -->
+      <div class="plan popular">
+        <h3>Pro</h3>
+        <div class="price">₹499<small>/month</small></div>
+        <p class="desc">Best for restaurants, pharmacies and local brands scaling delivery.</p>
+        <ul class="features">
+          <li>Up to 300 deliveries / month</li>
+          <li>Priority routing + faster ETA</li>
+          <li>Tracking widget + SMS updates</li>
+          <li>Email & chat support (Mon–Sat)</li>
+        </ul>
+        <div class="cta">
+          <a class="btn-primary" href="signup.html">Start Pro</a>
+        </div>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="plan">
+        <h3>Enterprise</h3>
+        <div class="price">Custom<small>/month</small></div>
+        <p class="desc">For marketplaces, chains and logistics with complex operations.</p>
+        <ul class="features">
+          <li>Unlimited deliveries</li>
+          <li>Custom SLAs & dedicated routing</li>
+          <li>API access & dashboard SSO</li>
+          <li>Dedicated success manager</li>
+        </ul>
+        <div class="cta">
+          <a class="btn-ghost" href="contact.html">Contact Sales</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comparison Table -->
+    <section class="compare" aria-label="Feature comparison">
+      <table class="pricing-compare">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Basic</th>
+            <th>Pro</th>
+            <th>Enterprise</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Monthly Deliveries</td>
+            <td>Up to 50</td>
+            <td>Up to 300</td>
+            <td>Unlimited</td>
+          </tr>
+          <tr>
+            <td>Estimated Time of Arrival (ETA)</td>
+            <td>Standard</td>
+            <td>Priority</td>
+            <td>Priority + Custom SLA</td>
+          </tr>
+          <tr>
+            <td>Real-time Tracking</td>
+            <td class="check">✔</td>
+            <td class="check">✔</td>
+            <td class="check">✔</td>
+          </tr>
+          <tr>
+            <td>Tracking Widget (Embed)</td>
+            <td class="muted">—</td>
+            <td class="check">✔</td>
+            <td class="check">✔</td>
+          </tr>
+          <tr>
+            <td>Notifications (SMS / Email)</td>
+            <td>Email</td>
+            <td>SMS + Email</td>
+            <td>Multi-channel + Webhooks</td>
+          </tr>
+          <tr>
+            <td>API Access</td>
+            <td class="muted">—</td>
+            <td class="check">✔</td>
+            <td class="check">✔</td>
+          </tr>
+          <tr>
+            <td>Support</td>
+            <td>Email (Mon–Fri)</td>
+            <td>Email + Chat (Mon–Sat)</td>
+            <td>24×7 Priority + Manager</td>
+          </tr>
+          <tr>
+            <td>Custom Integrations</td>
+            <td class="muted">—</td>
+            <td class="muted">—</td>
+            <td class="check">✔</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Footer (same as index.html) -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="careers.html">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="tracking.html">Drone Delivery</a></li>
+          <li><a href="business.html">Business Solutions</a></li>
+          <li><a href="pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="help-center.html">Help Center</a></li>
+          <li><a href="safety.html">Safety</a></li>
+          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="faqs.html">FAQs</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="licenses.html">Licenses</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 DronZo Technologies Inc. All rights reserved. | www.dronzo.delivery</p>
+    </div>
+  </footer>
+</body>
+</html>
