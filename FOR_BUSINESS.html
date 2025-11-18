@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DronZo - Ultra-Fast Drone Delivery Service</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body { 
+        background: #f7f7f7; 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        overflow-x: hidden;
+        position: relative;
+      }
+      
+      /* Animated Drone */
+      .flying-drone {
+        position: fixed;
+        width: 60px;
+        height: 60px;
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0;
+        transition: opacity 0.3s;
+        filter: drop-shadow(0 4px 8px rgba(75, 0, 130, 0.3));
+      }
+      
+      .flying-drone.active {
+        opacity: 1;
+        animation: flyAway 2s ease-out forwards;
+      }
+      
+      @keyframes flyAway {
+        0% {
+          transform: translate(0, 0) scale(0.5) rotate(0deg);
+        }
+        50% {
+          transform: translate(var(--tx), var(--ty)) scale(1.2) rotate(20deg);
+        }
+        100% {
+          transform: translate(var(--tx), calc(var(--ty) - 200px)) scale(0.3) rotate(45deg);
+          opacity: 0;
+        }
+      }
+      
+      /* Header */
+      header {
+        background: linear-gradient(135deg, #4B0082 0%, #6A0DAD 100%);
+        padding: 1rem 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+      
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #fff;
+        font-size: 1.8rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: transform 0.3s;
+      }
+      
+      .logo:hover {
+        transform: scale(1.05);
+      }
+      
+      .logo svg {
+        width: 40px;
+        height: 40px;
+        fill: #fff;
+        animation: float 3s ease-in-out infinite;
+      }
+      
+      @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      
+      nav a {
+        color: #fff;
+        text-decoration: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        transition: all 0.3s;
+        position: relative;
+      }
+      
+      nav a::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #fff;
+        transition: all 0.3s;
+        transform: translateX(-50%);
+      }
+      
+      nav a:hover::after {
+        width: 80%;
+      }
+      
+      nav a:hover {
+        transform: translateY(-2px);
+      }
+      
+      .nav-buttons {
+        display: flex;
+        gap: 0.5rem;
+      }
+      
+      .btn-login {
+        border: 2px solid #fff;
+      }
+      
+      .btn-signup {
+        background: #fff;
+        color: #4B0082 !important;
+        font-weight: bold;
+      }
+      
+      .btn-signup:hover {
+        background: #f0f0f0;
+      }
+      
+      .menu-toggle {
+        display: none;
+        background: none;
+        border: none;
+        color: #fff;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      
+      /* Hero Section */
+      .hero {
+        background: linear-gradient(135deg, #4B0082 0%, #6A0DAD 50%, #8B32DC 100%);
+        padding: 5rem 5%;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        min-height: 600px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+        background-size: 30px 30px;
+        animation: drift 20s linear infinite;
+      }
+      
+      @keyframes drift {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(30px, 30px); }
+      }
+      
+      .hero-content {
+        position: relative;
+        z-index: 1;
+        max-width: 900px;
+      }
+      
+      .hero h1 {
+        color: #fff;
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        animation: fadeInUp 1s ease-out;
+      }
+      
+      .hero p {
+        color: #fff;
+        font-size: clamp(1.1rem, 3vw, 1.5rem);
+        margin-bottom: 2rem;
+        opacity: 0.95;
+        animation: fadeInUp 1s ease-out 0.2s backwards;
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .hero-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        animation: fadeInUp 1s ease-out 0.4s backwards;
+      }
+      
+      .btn-primary, .btn-secondary {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: all 0.3s;
+        display: inline-block;
+      }
+      
+      .btn-primary {
+        background: #fff;
+        color: #4B0082;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
+      
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      }
+      
+      .btn-secondary {
+        background: transparent;
+        color: #fff;
+        border: 2px solid #fff;
+      }
+      
+      .btn-secondary:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-3px);
+      }
+      
+      /* Features Section */
+      .features {
+        padding: 5rem 5%;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      
+      .section-title {
+        text-align: center;
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        margin-bottom: 1rem;
+        color: #4B0082;
+      }
+      
+      .section-subtitle {
+        text-align: center;
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        margin-bottom: 3rem;
+        color: #666;
+      }
+      
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+      }
+      
+      .feature-card {
+        background: #fff;
+        padding: 2rem;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(75, 0, 130, 0.1), transparent);
+        transition: left 0.5s;
+      }
+      
+      .feature-card:hover::before {
+        left: 100%;
+      }
+      
+      .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(75, 0, 130, 0.2);
+      }
+      
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+      
+      .feature-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #333;
+      }
+      
+      .feature-card p {
+        color: #666;
+        line-height: 1.8;
+      }
+      
+      /* How It Works Section */
+      .how-it-works {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8e9ff 100%);
+        padding: 5rem 5%;
+      }
+      
+      .steps {
+        max-width: 1200px;
+        margin: 3rem auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+      
+      .step {
+        text-align: center;
+        position: relative;
+      }
+      
+      .step-number {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #4B0082, #6A0DAD);
+        color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin: 0 auto 1rem;
+        box-shadow: 0 4px 15px rgba(75, 0, 130, 0.3);
+      }
+      
+      .step h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #4B0082;
+      }
+      
+      .step p {
+        color: #666;
+      }
+      
+      /* Tracking Section */
+      .tracking {
+        padding: 5rem 5%;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      
+      .tracking-container {
+        background: #fff;
+        padding: 3rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        margin-top: 2rem;
+      }
+      
+      .tracking-input {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      .tracking-input input {
+        flex: 1;
+        min-width: 250px;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+      }
+      
+      .tracking-input input:focus {
+        outline: none;
+        border-color: #4B0082;
+      }
+      
+      .btn-track {
+        padding: 1rem 2rem;
+        background: #4B0082;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      
+      .btn-track:hover {
+        background: #6A0DAD;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(75, 0, 130, 0.3);
+      }
+      
+      /* Business Section */
+      .business {
+        background: #fff;
+        padding: 5rem 5%;
+      }
+      
+      .business-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        align-items: center;
+      }
+      
+      .business-text h2 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        margin-bottom: 1rem;
+        color: #4B0082;
+      }
+      
+      .business-text p {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.8;
+      }
+      
+      .business-features {
+        list-style: none;
+        margin: 2rem 0;
+      }
+      
+      .business-features li {
+        padding: 0.8rem 0;
+        color: #333;
+        position: relative;
+        padding-left: 2rem;
+      }
+      
+      .business-features li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #4B0082;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      
+      .business-image {
+        text-align: center;
+      }
+      
+      .business-image svg {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+      }
+      
+      /* Pricing Section */
+      .pricing {
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8e9ff 100%);
+        padding: 5rem 5%;
+      }
+      
+      .pricing-cards {
+        max-width: 1200px;
+        margin: 3rem auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+      }
+      
+      .pricing-card {
+        background: #fff;
+        padding: 2.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        text-align: center;
+      }
+      
+      .pricing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 25px rgba(75, 0, 130, 0.2);
+      }
+      
+      .pricing-card.featured {
+        border: 3px solid #4B0082;
+        transform: scale(1.05);
+      }
+      
+      .pricing-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #4B0082;
+      }
+      
+      .price {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #333;
+        margin: 1rem 0;
+      }
+      
+      .price span {
+        font-size: 1rem;
+        color: #666;
+      }
+      
+      .pricing-features {
+        list-style: none;
+        margin: 2rem 0;
+        text-align: left;
+      }
+      
+      .pricing-features li {
+        padding: 0.5rem 0;
+        color: #666;
+        position: relative;
+        padding-left: 1.5rem;
+      }
+      
+      .pricing-features li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        color: #4B0082;
+        font-weight: bold;
+      }
+      
+      .btn-choose {
+        width: 100%;
+        padding: 1rem;
+        background: #4B0082;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      
+      .btn-choose:hover {
+        background: #6A0DAD;
+        transform: translateY(-2px);
+      }
+      
+      /* Testimonials */
+      .testimonials {
+        padding: 5rem 5%;
+        background: #fff;
+      }
+      
+      .testimonial-grid {
+        max-width: 1200px;
+        margin: 3rem auto 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+      
+      .testimonial-card {
+        background: #f8f9ff;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      }
+      
+      .testimonial-text {
+        color: #333;
+        font-style: italic;
+        margin-bottom: 1rem;
+        line-height: 1.8;
+      }
+      
+      .testimonial-author {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+      
+      .author-avatar {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #4B0082, #6A0DAD);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+      
+      .author-info h4 {
+        color: #333;
+        margin-bottom: 0.2rem;
+      }
+      
+      .author-info p {
+        color: #666;
+        font-size: 0.9rem;
+      }
+      
+      /* CTA Section */
+      .cta {
+        background: linear-gradient(135deg, #4B0082 0%, #6A0DAD 100%);
+        padding: 5rem 5%;
+        text-align: center;
+        color: #fff;
+      }
+      
+      .cta h2 {
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        margin-bottom: 1rem;
+      }
+      
+      .cta p {
+        font-size: clamp(1rem, 2.5vw, 1.2rem);
+        margin-bottom: 2rem;
+        opacity: 0.95;
+      }
+      
+      /* Footer */
+      footer {
+        background: #1a1a1a;
+        color: #fff;
+        padding: 3rem 5% 1rem;
+      }
+      
+      .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+      
+      .footer-section h4 {
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+        color: #fff;
+      }
+      
+      .footer-section ul {
+        list-style: none;
+      }
+      
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+      
+      .footer-section a {
+        color: #ddd;
+        text-decoration: none;
+        transition: color 0.3s;
+      }
+      
+      .footer-section a:hover {
+        color: #fff;
+      }
+      
+      .footer-bottom {
+        text-align: center;
+        padding-top: 1.5rem;
+        border-top: 1px solid #333;
+        font-size: 0.9rem;
+        color: #999;
+      }
+      
+      .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      
+      .social-links a {
+        width: 40px;
+        height: 40px;
+        background: #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+      
+      .social-links a:hover {
+        background: #4B0082;
+        transform: translateY(-3px);
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        header {
+          padding: 1rem 3%;
+        }
+        
+        .menu-toggle {
+          display: block;
+        }
+        
+        nav {
+          display: none;
+          width: 100%;
+          flex-direction: column;
+          align-items: stretch;
+        }
+        
+        nav.active {
+          display: flex;
+        }
+        
+        nav a {
+          text-align: center;
+          padding: 0.8rem;
+        }
+        
+        .nav-buttons {
+          flex-direction: column;
+          width: 100%;
+        }
+        
+        .nav-buttons a {
+          width: 100%;
+        }
+        
+        .hero {
+          padding: 3rem 3%;
+          min-height: 500px;
+        }
+        
+        .hero-buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        
+        .btn-primary, .btn-secondary {
+          width: 100%;
+          max-width: 300px;
+        }
+        
+        .tracking-input {
+          flex-direction: column;
+        }
+        
+        .tracking-input input {
+          width: 100%;
+        }
+        
+        .business-content {
+          grid-template-columns: 1fr;
+        }
+      }
+      
+      @media (max-width: 480px) {
+        .logo svg {
+          width: 30px;
+          height: 30px;
+        }
+        
+        .logo span {
+          font-size: 1.4rem;
+        }
+        
+        .features-grid,
+        .steps,
+        .pricing-cards,
+        .testimonial-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+</head>
+<body>
+
+<!-- Flying Drone Element -->
+<div class="flying-drone" id="flyingDrone">
+  <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 20 L30 35 L35 40 L50 30 L65 40 L70 35 Z" fill="#4B0082"/>
+    <circle cx="30" cy="35" r="3" fill="#4B0082"/>
+    <circle cx="70" cy="35" r="3" fill="#4B0082"/>
+    <ellipse cx="50" cy="45" rx="15" ry="8" fill="#4B0082"/>
+    <line x1="35" y1="40" x2="30" y2="50" stroke="#4B0082" stroke-width="2"/>
+    <line x1="65" y1="40" x2="70" y2="50" stroke="#4B0082" stroke-width="2"/>
+    <circle cx="30" cy="50" r="4" fill="#6A0DAD"/>
+    <circle cx="70" cy="50" r="4" fill="#6A0DAD"/>
+    <path d="M45 28 L50 15 L55 28" stroke="#4B0082" stroke-width="2" fill="none"/>
+  </svg>
+</div>
+
+<header>
+    <div class="logo">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M50 20 L30 35 L35 40 L50 30 L65 40 L70 35 Z"/>
+        <circle cx="30" cy="35" r="3"/>
+        <circle cx="70" cy="35" r="3"/>
+        <ellipse cx="50" cy="45" rx="15" ry="8"/>
+        <line x1="35" y1="40" x2="30" y2="50" stroke="#fff" stroke-width="2"/>
+        <line x1="65" y1="40" x2="70" y2="50" stroke="#fff" stroke-width="2"/>
+        <circle cx="30" cy="50" r="4"/>
+        <circle cx="70" cy="50" r="4"/>
+        <path d="M45 28 L50 15 L55 28" stroke="#fff" stroke-width="2" fill="none"/>
+      </svg>
+      <span>DronZo</span>
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    <nav id="mainNav">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#tracking">Track Order</a>
+      <a href="#business">For Business</a>
+      <a href="#pricing">Pricing</a>
+      <div class="nav-buttons">
+        <a href="#login" class="btn-login">Log in</a>
+        <a href="#signup" class="btn-signup">Sign up</a>
+      </div>
+    </nav>
+</header>
+
+<main>
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Ultra-Fast Drone Delivery in 30 Minutes</h1>
+        <p>Experience the future of delivery with eco-friendly drones. Fast, safe, and sustainable delivery right to your doorstep.</p>
+        <div class="hero-buttons">
+            <a href="#signup" class="btn-primary">Get Started Free</a>
+            <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features" id="features">
+    <h2 class="section-title">Why Choose DronZo?</h2>
+    <p class="section-subtitle">Revolutionary drone technology meets exceptional service</p>
+    
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Lightning Fast</h3>
+            <p>Get your packages delivered in under 30 minutes with our advanced drone fleet and optimized routing algorithms.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🌱</div>
+            <h3>100% Eco-Friendly</h3>
+            <p>Zero emissions electric drones reduce carbon footprint by 95% compared to traditional delivery vehicles.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📍</div>
+            <h3>Real-Time Tracking</h3>
+            <p>Watch your package fly to you in real-time with our advanced GPS tracking and live drone camera feed.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Secure & Safe</h3>
+            <p>Military-grade encryption, collision avoidance systems, and AI-powered secure landing technology.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Cost Effective</h3>
+            <p>Up to 60% cheaper than traditional delivery with no hidden fees or surprise charges.</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🌍</div>
+            <h3>Wide Coverage</h3>
+            <p>Serving 500+ cities worldwide with 24/7 delivery capabilities to reach even remote locations.</p>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works" id="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">Simple, fast, and reliable drone delivery in 3 easy steps</p>
+    
+    <div class="steps">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Place Your Order</h3>
+            <p>Select your items and delivery location through our app or website. Choose a delivery time that works for you.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Drone Takes Flight</h3>
+            <p>Our smart drones automatically optimize the route and take off from the nearest hub for maximum efficiency.</p>
+        </div>
+        
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Receive Your Package</h3>
+            <p>Track your drone in real-time and receive your package safely at your designated landing zone.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Tracking Section -->
+<section class="tracking" id="tracking">
+    <h2 class="section-title">Track Your Delivery</h2>
+    <p class="section-subtitle">Enter your tracking ID to see your drone's real-time location</p>
+    
+    <div class="tracking-container">
+        <div class="tracking-input">
+            <input type="text" placeholder="Enter Tracking ID (e.g., DZ-2025-12345)" id="trackingInput">
+            <button class="btn-track" onclick="trackPackage()">Track Now</button>
+        </div>
+    </div>
+</section
