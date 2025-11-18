@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DronZo - Fast Drone Delivery at Your Fingertips</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #4B0082;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo svg {
+            width: 40px;
+            height: 40px;
+            fill: #4B0082;
+        }
+
+        nav {
+            display: flex;
+            gap: 35px;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4B0082;
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #4B0082;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-login, .btn-signup {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-login {
+            background: white;
+            border: 2px solid #e0e0e0;
+            color: #333;
+        }
+
+        .btn-login:hover {
+            background: #f8f9fa;
+            border-color: #4B0082;
+            color: #4B0082;
+            transform: translateY(-2px);
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 28px;
+            color: #4B0082;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 72px;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            z-index: 999;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .mobile-menu.active {
+            display: block;
+            max-height: 500px;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            background: #f8f9fa;
+            color: #4B0082;
+        }
+
+        .mobile-menu .nav-buttons {
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mobile-menu .btn-login,
+        .mobile-menu .btn-signup {
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 650px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+            top: -300px;
+            right: -300px;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -200px;
+            animation: pulse 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hero-content {
+            max-width: 550px;
+            z-index: 2;
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            color: white;
+            margin-bottom: 24px;
+            line-height: 1.2;
+            text-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .delivery-form {
+            background: white;
+            padding: 36px;
+            border-radius: 20px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            background: #fafafa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4B0082;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(75, 0, 130, 0.1);
+        }
+
+        .btn-request {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-request:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-request:active {
+            transform: translateY(-1px);
+        }
+
+        .drone-animation {
+            position: relative;
+            width: 450px;
+            height: 450px;
+            z-index: 2;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .drone {
+            width: 220px;
+            height: 220px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(-50%, -50%) translateY(0px) rotate(-2deg); 
+            }
+            50% { 
+                transform: translate(-50%, -50%) translateY(-25px) rotate(2deg); 
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 80px;
+            background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .features-subtitle {
+            text-align: center;
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 45px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .feature-card:hover::before {
+            opacity: 0.05;
+        }
+
+        .feature-icon {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            margin: 0 auto 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .feature-card h3 {
+            font-size: 26px;
+            margin-bottom: 18px;
+            color: #333;
+            position: relative;
+            z-index: 1;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.7;
+            font-size: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
+            color: white;
+            padding: 80px 80px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #667eea, #764ba2, transparent);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 50px;
+            margin-bottom: 50px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 24px;
+            font-size: 19px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 14px;
+        }
+
+        .footer-section ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .footer-section ul li a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid #333;
+            color: #aaa;
+            font-size: 14px;
+        }
+
+        /* Click Drone Animation */
+        .click-drone {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+        }
+
+        .click-drone.active {
+            animation: flyAway 1.8s ease-out forwards;
+        }
+
+        @keyframes flyAway {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) rotate(0deg) scale(1);
+            }
+            30% {
+                opacity: 1;
+                transform: translate(50px, -50px) rotate(180deg) scale(1.1);
+            }
+            60% {
+                opacity: 0.8;
+                transform: translate(120px, -120px) rotate(360deg) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(200px, -200px) rotate(540deg) scale(0.3);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero {
+                padding: 50px 50px;
+            }
+
+            .features {
+                padding: 80px 50px;
+            }
+
+            footer {
+                padding: 60px 50px 30px;
+            }
+
+            .drone-animation {
+                width: 350px;
+                height: 350px;
+            }
+
+            .drone {
+                width: 180px;
+                height: 180px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 16px 20px;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .hero {
+                flex-direction: column;
+                padding: 40px 20px;
+                min-height: auto;
+                text-align: center;
+            }
+
+            .hero-content {
+                max-width: 100%;
+            }
+
+            .hero h1 {
+                font-size: clamp(32px, 8vw, 48px);
+            }
+
+            .hero p {
+                font-size: clamp(16px, 4vw, 18px);
+            }
+
+            .delivery-form {
+                padding: 28px;
+                margin-top: 30px;
+            }
+
+            .drone-animation {
+                width: 250px;
+                height: 250px;
+                margin-top: 30px;
+            }
+
+            .drone {
+                width: 150px;
+                height: 150px;
+            }
+
+            .features {
+                padding: 60px 20px;
+            }
+
+            .features h2 {
+                font-size: clamp(32px, 8vw, 42px);
+            }
+
+            .features-subtitle {
+                font-size: 16px;
+                padding: 0 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .feature-card {
+                padding: 35px 25px;
+            }
+
+            footer {
+                padding: 50px 20px 20px;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo span {
+                font-size: 22px;
+            }
+
+            .logo svg {
+                width: 32px;
+                height: 32px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .delivery-form {
+                padding: 24px;
+            }
+
+            .form-group input {
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+
+            .btn-request {
+                padding: 16px;
+                font-size: 16px;
+            }
+
+            .drone-animation {
+                width: 200px;
+                height: 200px;
+            }
+
+            .drone {
+                width: 120px;
+                height: 120px;
+            }
+
+            .features h2 {
+                font-size: 28px;
+            }
+
+            .features-subtitle {
+                font-size: 15px;
+            }
+
+            .feature-card {
+                padding: 30px 20px;
+            }
+
+            .feature-icon {
+                width: 75px;
+                height: 75px;
+                font-size: 38px;
+            }
+
+            .feature-card h3 {
+                font-size: 22px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 20 L30 35 L35 40 L50 30 L65 40 L70 35 Z" fill="#4B0082"/>
+                <circle cx="30" cy="35" r="3" fill="#764ba2"/>
+                <circle cx="70" cy="35" r="3" fill="#764ba2"/>
+                <ellipse cx="50" cy="45" rx="15" ry="8" fill="#4B0082"/>
+                <line x1="35" y1="40" x2="30" y2="50" stroke="#4B0082" stroke-width="2"/>
+                <line x1="65" y1="40" x2="70" y2="50" stroke="#4B0082" stroke-width="2"/>
+                <circle cx="30" cy="50" r="4" fill="#667eea"/>
+                <circle cx="70" cy="50" r="4" fill="#667eea"/>
+                <path d="M45 28 L50 15 L55 28" stroke="#4B0082" stroke-width="2" fill="none"/>
+            </svg>
+            <span>DronZo</span>
+        </div>
+        <button class="menu-toggle" onclick="toggleMobileMenu()">☰</button>
+        <nav>
+            <a href="#delivery">Delivery</a>
+            <a href="tracking.html">Track Order</a>
+            <a href="For_Business.html">For Business</a>
+            <a href="about.html">About</a>
+            <div class="nav-buttons">
+                <a href="login_page.html" class="btn-login">Log in</a>
+                <a href="login_page.html" class="btn-signup">Sign up</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#delivery">Delivery</a>
+        <a href="tracking.html">Track Order</a>
+        <a href="For_Business.html">For Business</a>
+        <a href="about.html">About</a>
+        <div class="nav-buttons">
+            <a href="login_page.html" class="btn-login">Log in</a>
+            <a href="signup.html" class="btn-signup">Sign up</a>
+        </div>
+    </div>
+
+    <section class="hero" id="delivery">
+        <div class="hero-content">
+            <h1>Sky-high delivery, lightning fast</h1>
+            <p>Get your packages delivered by drone in minutes. The future of delivery is here with DronZo.</p>
+            
+            <div class="delivery-form">
+                <div class="form-group">
+                    <label>Pickup Location</label>
+                    <input type="text" placeholder="Enter pickup address">
+                </div>
+                <div class="form-group">
+                    <label>Drop-off Location</label>
+                    <input type="text" placeholder="Enter destination address">
+                </div>
+                <button class="btn-request" onclick="window.location.href='tracking.html'">Request Drone Delivery</button>
+            </div>
+        </div>
+
+        <div class="drone-animation">
+            <svg class="drone" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="droneGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <ellipse cx="100" cy="100" rx="40" ry="20" fill="url(#droneGradient)"/>
+                <line x1="60" y1="85" x2="40" y2="70" stroke="white" stroke-width="4"/>
+                <line x1="140" y1="85" x2="160" y2="70" stroke="white" stroke-width="4"/>
+                <circle cx="40" cy="70" r="15" fill="white" opacity="0.8"/>
+                <circle cx="160" cy="70" r="15" fill="white" opacity="0.8"/>
+                <circle cx="40" cy="70" r="8" fill="url(#droneGradient)"/>
+                <circle cx="160" cy="70" r="8" fill="url(#droneGradient)"/>
+                <path d="M85 80 L100 50 L115 80" stroke="white" stroke-width="3" fill="none"/>
+                <rect x="85" y="110" width="30" height="25" rx="3" fill="white" opacity="0.9"/>
+            </svg>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Why Choose DronZo?</h2>
+        <p class="features-subtitle">Experience the future of delivery with cutting-edge drone technology designed for speed, safety, and sustainability.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Ultra Fast</h3>
+                <p>Deliveries in under 30 minutes. Our drones fly direct routes, avoiding traffic completely.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Eco-Friendly</h3>
+                <p>Zero emissions delivery. Help reduce carbon footprint with electric drone technology.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <h3>Real-Time Tracking</h3>
+                <p>Watch your package fly to you in real-time with GPS tracking and live updates.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <h3>Affordable Rates</h3>
+                <p>Competitive pricing with no surge fees. Transparent costs calculated upfront.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Safe & Secure</h3>
+                <p>Advanced AI navigation and secure delivery protocols ensure your package arrives safely.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>24/7 Service</h3>
+                <p>Available round the clock for your delivery needs, rain or shine.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="careers.html">Careers</a></li>
+                    <li><a href="press.html">Press</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="tracking.html">Drone Delivery</a></li>
+                    <li><a href="business.html">Business Solutions</a></li>
+                    <li><a href="api.html">API Integration</a></li>
+                    <li><a href="pricing.html">Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="help-center.html">Help Center</a></li>
+                    <li><a href="safety.html">Safety</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="faqs.html">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="terms.html">Terms of Service</a></li>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="cookies.html">Cookie Policy</a></li>
+                    <li><a href="licenses.html">Licenses</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 DronZo Technologies Inc. All rights reserved. | www.dronzo.delivery</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const menuToggle = document.querySelector('.menu-toggle');
+            
+            if (!mobileMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+            }
+        });
+
+        // Click anywhere to spawn flying drone
+        document.addEventListener('click', function(e) {
+            const clickDrone = document.createElement('div');
+            clickDrone.className = 'click-drone';
+            clickDrone.innerHTML = `
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="clickDroneGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="20" cy="20" r="12" fill="rgba(102, 126, 234, 0.3)"/>
+                    <circle cx="80" cy="20" r="12" fill="rgba(102, 126, 234, 0.3)"/>
+                    <circle cx="20" cy="80" r="12" fill="rgba(102, 126, 234, 0.3)"/>
+                    <circle cx="80" cy="80" r="12" fill="rgba(102, 126, 234, 0.3)"/>
+                    <ellipse cx="50" cy="50" rx="25" ry="15" fill="url(#clickDroneGrad)"/>
+                    <rect x="20" y="15" width="3" height="30" fill="#555"/>
+                    <rect x="77" y="15" width="3" height="30" fill="#555"/>
+                    <rect x="20" y="55" width="3" height="30" fill="#555"/>
+                    <rect x="77" y="55" width="3" height="30" fill="#555"/>
+                    <circle cx="50" cy="50" r="8" fill="#FFD700"/>
+                    <path d="M45 35 L50 25 L55 35" stroke="white" stroke-width="2" fill="none"/>
+                </svg>
+            `;
+            
+            clickDrone.style.left = (e.clientX - 30) + 'px';
+            clickDrone.style.top = (e.clientY - 30) + 'px';
+            
+            document.body.appendChild(clickDrone);
+            
+            setTimeout(() => {
+                clickDrone.classList.add('active');
+            }, 10);
+            
+            setTimeout(() => {
+                clickDrone.remove();
+            }, 1800);
+        });
+
+        // Smooth scroll for navigation links
+        document.querySelectorAll('nav a, .mobile-menu a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = this.getAttribute('href');
+                if (target && target.startsWith('#')) {
+                    e.preventDefault();
+                    const element = document.querySelector(target);
+                    if (element) {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        // Close mobile menu after clicking
+                        document.getElementById('mobileMenu').classList.remove('active');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
